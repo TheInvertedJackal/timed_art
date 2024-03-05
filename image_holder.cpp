@@ -5,11 +5,11 @@
 
 using namespace std;
 
-ImageHolder::ImageHolder(SDL_Renderer* rend,string path, double x, double y): 
+ImageHolder::ImageHolder(SDL_Renderer* rend,string* path, double x, double y): 
     _path{path},_rend{rend}, _img_in_use{false}, _x_fit{x}, _y_fit{y}{}
 
 SDL_Texture * ImageHolder::getTexture(){
-    SDL_Surface* sur = IMG_Load(_path.c_str());
+    SDL_Surface* sur = IMG_Load(_path->c_str());
     if(sur == NULL){
         return nullptr;
     }
@@ -69,5 +69,16 @@ ImageHolder* ImagePool::getFreshImage(){
 }
 
 void ImagePool::deletePool(){
-    
+    for (int i = 0; i < _useable_count; i++){
+        cout << "Removed" << i << endl;
+        _useable_images[i]->destoryTexture();
+        delete _useable_images[i];
+    }
+    delete[] _useable_images;
+    for (int i = _used_end;i != _used_pointer ; i = (i + 1) % MAX_IMAGES){
+        cout << "Removed used:" << i << endl;
+        _used_images[i]->destoryTexture();
+        delete _used_images[i];
+    }
+    delete[] _used_images;
 }

@@ -5,18 +5,18 @@
 #include <string>
 #include <vector>
 
-const int MAX_IMAGES = 300;
+const int MAX_IMAGES = 10;
 
 class ImageHolder{
     public:
         //Takes in the path of the image.
-        ImageHolder(SDL_Renderer*, std::string, double, double);
+        ImageHolder(SDL_Renderer*, std::string*, double, double);
         //Gets the image texture
         SDL_Texture * getTexture();
-        //Deletes the image testure
+        //Deletes the image texture
         void destoryTexture();
     private:
-        std::string _path;
+        std::string* _path;
         SDL_Renderer* _rend;
         SDL_Texture * _texture;
         bool _img_in_use;
