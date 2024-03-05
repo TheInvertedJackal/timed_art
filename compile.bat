@@ -1,1 +1,1 @@
-g++ -std=c++17 *.cpp -I src\include -L src\lib -Wall -lmingw32 -lSDL2main -lSDL2 -o a
+g++ -std=c++17 *.cpp -I src\include -I . -L src\lib -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o a
