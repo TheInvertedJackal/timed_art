@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
         cout << "error initializing SDL: " << SDL_GetError() << endl;
         return 1;
     }
-    SDL_Window* win = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
+    SDL_Window* win = SDL_CreateWindow("Timed Art", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED
         , WINDOW_SIZE_X, WINDOW_SIZE_Y, 0);
     if(win == NULL){
         cout << "Error with window creation";
@@ -57,8 +57,10 @@ int main(int argc, char* argv[]){
                             case SDLK_RETURN:
                             img_holder_test->destoryTexture();
                             img_holder_test = testPool.getFreshImage();
+                            if(img_holder_test == nullptr){
+                                cerr << "There was an error with the image..." << endl;
+                            }
                             test_tex = img_holder_test->getTexture();
-                            cout << "SWITCH!" << endl;
                         break;
                     }
                     break;
@@ -70,6 +72,7 @@ int main(int argc, char* argv[]){
     }
 
     img_holder_test->destoryTexture();
+    testPool.deletePool();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(win);
     IMG_Quit();
