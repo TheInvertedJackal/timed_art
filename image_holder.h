@@ -5,7 +5,8 @@
 #include <string>
 #include <vector>
 
-const int MAX_IMAGES = 10;
+const int MAX_IMAGES = 5000;
+const double IMG_RATIO_W = .95, IMG_RATIO_H = .9;
 
 class ImageHolder{
     public:
@@ -15,12 +16,15 @@ class ImageHolder{
         SDL_Texture * getTexture();
         //Deletes the image texture
         void destoryTexture();
+        void normalize(SDL_Rect*);
+        void setWindowXAndY(double, double);
     private:
         std::string* _path;
         SDL_Renderer* _rend;
         SDL_Texture * _texture;
         bool _img_in_use;
-        double _x_fit, _y_fit;
+        double _screen_x, _screen_y;
+        int _img_width, _img_height;
 };
 
 class ImagePool{
