@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const int WINDOW_SIZE_X = 1000, WINDOW_SIZE_Y = 850;
+const int WINDOW_SIZE_X = 800, WINDOW_SIZE_Y = 600z;
 
 struct report{
     size_t finished = 0;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     //session_request * new_session = startOut(WINDOW_SIZE_X, WINDOW_SIZE_Y);
-    session_request * new_session = new session_request; new_session->dir = "C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
+    session_request * new_session = new session_request; //new_session->dir = "C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
     while(new_session != nullptr){
         ArtSession session = ArtSession(new_session->dir, new_session->duration, new_session->img_count);
         //Save dir (and photo count!)and allow for easy access later.
