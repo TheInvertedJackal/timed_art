@@ -14,7 +14,7 @@ struct report{
     size_t skipped = 0;
     bool quit = false;
     bool error = false;
-    string error_msg;
+    string error_msg = "";
 };
 
 struct session_request{
@@ -27,10 +27,9 @@ session_request * startOut(int, int);
 
 report * letsArt(ArtSession, int, int);
 
-session_request * artAgain(report *,int, int);
+session_request * artAgain(session_request*, report*, int, int);
 
 void resizeLoadingBar(SDL_Rect*, double, double, double);
-
 
 int main(int argc, char *argv[])
 {
@@ -39,14 +38,17 @@ int main(int argc, char *argv[])
         cout << "error initializing SDL: " << SDL_GetError() << endl;
         return -1;
     }
-    session_request * new_session = startOut(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+    //session_request * new_session = startOut(WINDOW_SIZE_X, WINDOW_SIZE_Y);
+    session_request * new_session = new session_request; new_session->dir = "C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
     while(new_session != nullptr){
         ArtSession session = ArtSession(new_session->dir, new_session->duration, new_session->img_count);
-        delete new_session;
         //Save dir (and photo count!)and allow for easy access later.
         report * session_report = letsArt(session, WINDOW_SIZE_X, WINDOW_SIZE_Y);
         if(!session_report->quit){
-            new_session = artAgain(session_report, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+            new_session = artAgain(new_session,session_report, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+        } else {
+            delete new_session;
+            new_session = nullptr;
         }
         delete session_report;
     }
@@ -57,8 +59,18 @@ session_request * startOut(int win_x, int win_y){
     return nullptr;
 }
 
-session_request * artAgain(report * session_report, int win_x, int win_y){
-    return nullptr;
+session_request * artAgain(session_request * p_session, report * s_r, int win_x, int win_y){
+    session_request * ret_val = nullptr;
+    if(s_r->error){
+        cout << "ERROR: " << s_r->error_msg << endl;
+    }
+    cout << "Completed: " << s_r->finished << endl;
+    cout << "Skipped: " << s_r->skipped << endl;
+    cout << "Total: " << s_r->finished + s_r->skipped << endl;
+    if(!s_r->quit){
+        ret_val = p_session;
+    }
+    return ret_val;
 }
 
 report * letsArt(ArtSession art, int og_window_x, int og_window_y)
@@ -67,7 +79,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
     SDL_Window *art_win = SDL_CreateWindow("Timed Art", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, og_window_x, og_window_y, SDL_WINDOW_RESIZABLE);
     if (art_win == NULL)
     {
-        this_session->error_msg = "There was an error with window creaton.";
+        this_session->error_msg = SDL_GetError();
         this_session->error = true;
         return this_session;
     }
@@ -76,7 +88,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
     if (art_ren == NULL)
     {
         SDL_DestroyWindow(art_win);
-        this_session->error_msg = "There was an error with renderer creaton.";
+        this_session->error_msg = SDL_GetError();
         this_session->error = true;
         return this_session;
     }
@@ -164,7 +176,6 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
                 switch (event.window.event){
                 case SDL_WINDOWEVENT_SIZE_CHANGED:
                 case SDL_WINDOWEVENT_RESIZED:
-                    ++this_session->finished;
                     current_window_x = event.window.data1;
                     current_window_y = event.window.data2;
                     img_holder->setWindowXAndY(current_window_x, current_window_y);
@@ -179,7 +190,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
         if(duration != 0){
             double secs = (clock() - start_t) / 1000.0;
             if(secs > duration){
-                ++completedPhotos;
+                ++this_session->finished;
                 ++this_session->skipped;
                 img_holder->destoryTexture();
                 img_holder = pool.getFreshImage();
@@ -196,8 +207,10 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
         }
         SDL_RenderClear(art_ren);
         SDL_RenderCopy(art_ren, tex, NULL, rect);
-        SDL_RenderCopy(art_ren, lb_back_texture, NULL, lb_back_rect);
-        SDL_RenderCopy(art_ren, lb_texture, NULL, lb_rect);
+        if(!art.isInfinite()){
+            SDL_RenderCopy(art_ren, lb_back_texture, NULL, lb_back_rect);
+            SDL_RenderCopy(art_ren, lb_texture, NULL, lb_rect);
+        }
         SDL_RenderPresent(art_ren);
 
         arting &= (maxPhotos == 0 || completedPhotos < maxPhotos);
