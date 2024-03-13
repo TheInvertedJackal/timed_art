@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const int WINDOW_SIZE_X = 1000, WINDOW_SIZE_Y = 850;
+const int WINDOW_SIZE_X = 800, WINDOW_SIZE_Y = 600;
 
 struct report{
     size_t finished = 0;
