@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     }
     //session_request * new_session = startOut(WINDOW_SIZE_X, WINDOW_SIZE_Y);
     session_request * new_session = new session_request; new_session->dir = "C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
+    new_session->duration = 5;
     while(new_session != nullptr){
         ArtSession session = ArtSession(new_session->dir, new_session->duration, new_session->img_count);
         //Save dir (and photo count!)and allow for easy access later.
@@ -96,7 +97,6 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
     ImagePool pool = ImagePool();
     string ** imgs = art.getImages();
     size_t count = art.getTotalImgCount();
-    cout << count << endl;
     for (size_t i = 0; i < count; i++)
     {
         pool.addImage(new ImageHolder(art_ren, imgs[i], og_window_x, og_window_y));
@@ -143,6 +143,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
         while (SDL_PollEvent(&event)){
             switch (event.type){
             case SDL_QUIT:
+                this_session->quit = true;
                 arting = false;
                 break;
             case SDL_KEYDOWN:
@@ -207,10 +208,8 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
         }
         SDL_RenderClear(art_ren);
         SDL_RenderCopy(art_ren, tex, NULL, rect);
-        if(!art.isInfinite()){
-            SDL_RenderCopy(art_ren, lb_back_texture, NULL, lb_back_rect);
-            SDL_RenderCopy(art_ren, lb_texture, NULL, lb_rect);
-        }
+        SDL_RenderCopy(art_ren, lb_back_texture, NULL, lb_back_rect);
+        SDL_RenderCopy(art_ren, lb_texture, NULL, lb_rect);
         SDL_RenderPresent(art_ren);
 
         arting &= (maxPhotos == 0 || completedPhotos < maxPhotos);
