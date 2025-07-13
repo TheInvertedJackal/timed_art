@@ -19,7 +19,7 @@ struct report{
 
 struct session_request{
     string dir = ".";
-    size_t duration = 0;
+    double duration = 0;
     size_t img_count = 0;
 };
 
@@ -39,8 +39,15 @@ int main(int argc, char *argv[])
         return -1;
     }
     //session_request * new_session = startOut(WINDOW_SIZE_X, WINDOW_SIZE_Y);
-    session_request * new_session = new session_request; new_session->dir = "C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
-    new_session->duration = 5;
+    session_request * new_session = new session_request; 
+    //Temp
+    string temp;
+    getline(cin, temp);
+
+    new_session->dir = temp; //"C:\\Users\\mci25\\OneDrive\\Pictures\\DrawingRefs";
+    double dur;
+    cin >> dur;
+    new_session->duration = dur * 1000;
     while(new_session != nullptr){
         ArtSession session = ArtSession(new_session->dir, new_session->duration, new_session->img_count);
         //Save dir (and photo count!)and allow for easy access later.
@@ -128,7 +135,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
 
     size_t maxPhotos = art.getCount();
 
-    clock_t duration = (clock_t) art.getDuration();
+    clock_t duration_ms = (clock_t) art.getDuration();
 
     clock_t start_t = clock();
 
@@ -188,9 +195,9 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
                 break;
             }
         }
-        if(duration != 0){
+        if(duration_ms != 0){
             double secs = (clock() - start_t) / 1000.0;
-            if(secs > duration){
+            if(secs * 1000 > duration_ms){
                 ++this_session->finished;
                 ++this_session->skipped;
                 img_holder->destoryTexture();
@@ -203,7 +210,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
                 img_holder->normalize(rect);
                 start_t = clock();
             } else {
-                resizeLoadingBar(lb_rect, current_window_x, current_window_y, secs / duration);
+                resizeLoadingBar(lb_rect, current_window_x, current_window_y, secs / duration_ms);
             }
         }
         SDL_RenderClear(art_ren);
