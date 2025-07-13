@@ -1,1 +1,1 @@
-g++ -std=c++17 *.cpp -I src\include -I . -L src\lib -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o a
+g++ -std=c++17 main.cpp image_holder.cpp art_session.cpp -I src\include -I . -L src\lib -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o a

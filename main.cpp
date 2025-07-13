@@ -210,7 +210,7 @@ report * letsArt(ArtSession art, int og_window_x, int og_window_y)
                 img_holder->normalize(rect);
                 start_t = clock();
             } else {
-                resizeLoadingBar(lb_rect, current_window_x, current_window_y, secs / duration_ms);
+                resizeLoadingBar(lb_rect, current_window_x, current_window_y, secs / (duration_ms / 1000));
             }
         }
         SDL_RenderClear(art_ren);
